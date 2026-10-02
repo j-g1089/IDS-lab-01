@@ -215,7 +215,7 @@ visitors %>%
 
 _Observe in question 6 that the mean statistics across all settings are much larger than the corresponding median statistics. Discuss in your group what this suggests about the data._
 
-**Write your answer here**
+**Positive skew - some outliers with abnormally large number of visits may be present**
 
 ## Question 8
 
@@ -256,9 +256,11 @@ visitors_with_nations %>%
 _How many tourist attractions are there in each of the 4 nations? From this, discuss in your group how reliable you think the inter-quartile estimates are._
 
 
-```{r Ex_l}
+```{r Ex_m}
 visitors_with_nations %>%
   count(nation)
+
+#Far less reliable for NI and Wales as sample size is far smaller
 ```
 
 
@@ -269,10 +271,12 @@ visitors_with_nations %>%
 
 _Within each of the 4 nations, what is the proportion of tourist attractions that have free admission for all visitors?_
 
-```{r Ex_m}
-# Write your code here
-
-
+```{r Ex_n}
+visitors_with_nations %>%
+  group_by(nation) %>%
+  count(nation,admission == "Free")
+  
+#England: 93/240 = 31/80, NI: 1/9, Scotland: 34/97, Wales: 0
 ```
 
 
@@ -280,8 +284,21 @@ _Within each of the 4 nations, what is the proportion of tourist attractions tha
 
 _Calculate the percentage change in visitor admissions from 2021 to 2022. Of the tourist attractions in Scotland, sort into increasing numerical order the types of admission charges based on the mean percentage change in visitor numbers._
 
-```{r Ex_n}
-# Write your code here
+```{r Ex_o}
+visitors %>%
+  summarise(
+    percentage_change = 100*(sum(n_2022,na.rm = TRUE)-sum(n_2021,na.rm = TRUE))/sum(n_2021,na.rm = TRUE)
+  )
+
+scotland_percentages <- visitors_with_nations %>%
+  filter(nation == "Scotland") %>%
+    mutate(
+      percentage_change = 100*(n_2022-n_2021)/n_2021,na.rm = TRUE
+  )
+scotland_percentages %>%
+  select(attraction,percentage_change,admission) %>%
+  arrange(percentage_change)
+ 
 
 
 
